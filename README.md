@@ -17,7 +17,7 @@ vagrant up
 
 ### Prepare the workbench
 
-1. Recursive clone : git clone --recursive https://github.com/rubykube/workbench.git
+1. Recursive clone : git clone --recursive [https://github.com/rubykube/workbench.git](https://github.com/rubykube/workbench.git)
 2. Build the images: `make build`
 3. run the application: `make run`
 4. Add peatio and barong into your /etc/hosts
