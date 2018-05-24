@@ -24,6 +24,9 @@ test: prepare
 start: prepare setup-apps
 	$(COMPOSE) up -d peatio barong
 
+just_start:
+	$(COMPOSE) up -d peatio barong
+
 update:
 	git submodule update --init --remote
 
