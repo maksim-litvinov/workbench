@@ -27,6 +27,13 @@ start: prepare setup-apps
 just_start:
 	$(COMPOSE) up -d peatio barong
 
+restart:
+	$(COMPOSE) restart
+	
+peatio_rebuild:
+	$(COMPOSE) build peatio
+	$(COMPOSE) restart
+
 update:
 	git submodule update --init --remote
 
