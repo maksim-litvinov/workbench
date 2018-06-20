@@ -1,0 +1,9 @@
+logLevel = "INFO"
+
+[api]
+
+[docker]
+domain = "local"
+watch = true
+exposedByDefault = false
+usebindportip = true

@@ -5,19 +5,25 @@ services:
     build:
       context: ../app/peatio
     depends_on:
+      - proxy
       - db
       - redis
       - rabbitmq
       - rabbitmq_management
       - smtp_relay
-      - peatio_daemons
       - barong
-    ports:
-      - "8000:8000"
+      - slanger
     env_file:
       - ../config/peatio.env
+    expose:
+      - "8000"
     volumes:
       - ../config/peatio:/opt/peatio/config:ro
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: 'Host: api.wb.local'
+      traefik.port: 8000
+    command: bash -c "bin/link_config && puma --config config/puma.rb"
 
   peatio_daemons:
     build:
@@ -28,21 +34,41 @@ services:
       - rabbitmq
       - rabbitmq_management
       - coinhub
-    ports:
-      - "8080:8080"
     env_file:
       - ../config/peatio.env
     volumes:
       - ../config/peatio:/opt/peatio/config:ro
-    command: god -c lib/daemons/daemons.god -D start
+    command: bash -c "bin/link_config && god -c lib/daemons/daemons.god -D start"
 
   barong:
     build:
       context: ../app/barong
     depends_on:
+      - proxy
       - db
       - vault
-    ports:
-      - "8001:8001"
     env_file:
       - ../config/barong.env
+    volumes:
+      - ../config/barong:/opt/barong/config:ro
+    expose:
+      - "8001"
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: 'Host: auth.wb.local'
+      traefik.port: 8001
+
+  trading_ui:
+    build:
+      context: ../app/trading-ui
+    depends_on:
+      - proxy
+      - peatio
+    env_file:
+      - ../config/trading-ui.env
+    expose:
+      - "8002"
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: 'Host: api.wb.local; PathPrefix:/trading, /trading-ui-assets'
+      traefik.port: 8002
