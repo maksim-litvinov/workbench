@@ -19,12 +19,23 @@ services:
 
   redis:
     image: redis:4.0.9-alpine
+    ports:
+      - '6379:6379'
 
   rabbitmq:
     image: rabbitmq:3.7.4-alpine
+    ports:
+      - '5672:5672'
+
+  rabbitmq_management:
+    image: rabbitmq:3.7.4-management-alpine
+    ports:
+      - '15672:15672'
 
   vault:
     image: vault:0.9.6
+    ports:
+      - '8200:8200'
     environment:
       SKIP_SETCAP: 1
       VAULT_TOKEN: changeme
