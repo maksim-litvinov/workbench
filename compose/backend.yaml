@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  rippled:
+    build:
+      context: ../app/rippled
+    volumes:
+      - ./config:/config/:ro
+    ports:
+      - "80:80"
+      - "5005:5005"
 
   coinhub:
     image: rubykube/coinhub
@@ -30,7 +38,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - "15672:15672"
-        "5672:5672"
+      - "5672:5672"
 
   vault:
     image: vault:0.10.2

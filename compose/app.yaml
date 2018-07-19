@@ -9,7 +9,6 @@ services:
       - db
       - redis
       - rabbitmq
-      - rabbitmq_management
       - smtp_relay
       - barong
       - slanger
@@ -32,7 +31,6 @@ services:
       - db
       - redis
       - rabbitmq
-      - rabbitmq_management
       - coinhub
     env_file:
       - ../config/peatio.env
@@ -52,11 +50,24 @@ services:
     volumes:
       - ../config/barong:/opt/barong/config:ro
     expose:
-      - "8001"
+      - "5000"
     labels:
       traefik.enable: true
       traefik.frontend.rule: 'Host: auth.wb.local'
-      traefik.port: 8001
+      traefik.port: 5000
+
+  frontend:
+    build:
+      context: ../app/frontend
+    depends_on:
+      - proxy
+      - barong
+    ports:
+      - "4200:4200"
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: 'Host: frontend.wb.local'
+      traefik.port: 4200
 
   trading_ui:
     build:
