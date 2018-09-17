@@ -10,9 +10,9 @@ services:
       - redis
       - rabbitmq
       - barong
-      - ranger
-      - geth
-      - coinhub
+      # - ranger
+      # - geth
+      # - coinhub
     env_file:
       - ../config/peatio.env
     expose:

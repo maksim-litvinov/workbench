@@ -6,20 +6,16 @@ default: run
 pull:
 	$(COMPOSE) pull vault       \
 	                db          \
-	                phpmyadmin  \
 	                redis       \
 	                rabbitmq    \
 	                mailcatcher \
-	                ranger      \
-	                coinhub     \
-	                geth
+									ambassador
 
 
 build: pull
 	$(COMPOSE) build peatio     \
-	                 barong     \
-	                 trading_ui \
-	                 integration
+	                 barong \
+	                 trading_ui
 
 geth:
 	@$(COMPOSE) up -d geth
@@ -48,20 +44,20 @@ daemons:
 	                         withdraw_coin
 
 dependencies:
-	$(COMPOSE) up -d vault db phpmyadmin redis rabbitmq mailcatcher ranger coinhub
+	$(COMPOSE) up -d vault db redis rabbitmq mailcatcher
 	$(COMPOSE) run --rm vault secrets enable totp || true
 
 proxy:
 	@touch config/acme.json && chmod 0600 config/acme.json
 
-prepare: proxy dependencies daemons cryptonodes
+prepare: proxy dependencies
 
 setup-apps: build
 	$(COMPOSE) run --rm peatio bash -c "./bin/link_config && bundle exec rake db:create db:migrate db:seed"
 	$(COMPOSE) run --rm barong bash -c "./bin/link_config && ./bin/setup"
 
 run: prepare setup-apps
-	$(COMPOSE) up --build -d peatio barong trading_ui proxy
+	$(COMPOSE) up --build -d peatio barong trading_ui proxy ambassador
 
 test:
 	@$(COMPOSE) run --rm integration
@@ -70,7 +66,7 @@ stress:
 	@bundle exec rake toolbox:run
 
 start: prepare setup-apps
-	$(COMPOSE) up -d peatio barong trading_ui proxy
+	$(COMPOSE) up -d peatio barong trading_ui proxy ambassador
 
 update:
 	git submodule update --init --remote
