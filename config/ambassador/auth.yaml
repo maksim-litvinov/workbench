@@ -1,0 +1,8 @@
+---
+apiVersion: ambassador/v0
+kind:  AuthService
+name:  authentication
+auth_service: "barong:8001"
+path_prefix: "/api/v1/sessions/jwt"
+allowed_headers:
+- "Authentication"
